@@ -33,6 +33,10 @@ public class Main {
                         executor.selectColumn(tokens[++i]).printCSV();
                         i += 1;
                     }
+                    else if (Objects.equals(tokens[i], "TAKE")) {
+                        executor.takeRow(tokens[++i]).printCSV();
+                        i += 1;
+                    }
                 }
             }
             query = sc.nextLine();
