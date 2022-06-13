@@ -52,6 +52,13 @@ public class Main {
                             executor.getTable().printCSV();
                         }
                     }
+                    else if (Objects.equals(tokens[i], "COUNTBY")) {
+                        executor.count(tokens[++i]);
+                        i += 1;
+                        if (i == size) {
+                            executor.getTable().printCSV();
+                        }
+                    }
                 }
             }
             query = sc.nextLine();

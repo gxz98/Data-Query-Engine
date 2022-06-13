@@ -1,9 +1,6 @@
 package com.databricks.Impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -63,6 +60,7 @@ public class Table implements com.databricks.Table {
                 (e1, e2) -> Entry.compareBy(e1, e2, idx)).toList());
     }
 
+    // in place join by column
     public void join(Table t, String col) {
         // a lookup for key-entry mapping
         HashMap<String, Entry> keyToEntry = new HashMap<>();
@@ -89,6 +87,16 @@ public class Table implements com.databricks.Table {
         body = newBody;
     }
 
+    public void countBy(String col) {
+        int idx = getIndexByName(col);
+        ArrayList<String> column = getColumn(idx);
+        Map<String, Long> count = column.stream().collect(Collectors.groupingBy(p -> p, Collectors.counting()));
+        title = new ArrayList<>(List.of(col, "count"));
+        body = new ArrayList<>();
+        ArrayList<String> res = new ArrayList<>();
+        count.forEach((k,v) -> body.add(new Entry(k.toString() + "," + v.toString())));
+    }
+
     private int getIndexByName(String col) {
         int i = 0;
         while (i < title.size()) {
@@ -113,6 +121,13 @@ public class Table implements com.databricks.Table {
         return body;
     }
 
+    public ArrayList<String> getColumn(int idx) {
+        ArrayList<String> res = new ArrayList<>();
+        for (Entry e : body) {
+            res.add(e.getValueAt(idx));
+        }
+        return res;
+    }
     @Override
     public void printCSV() {
         // remove bracket

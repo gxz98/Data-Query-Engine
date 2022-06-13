@@ -49,6 +49,10 @@ public class Executor {
         table.join(t, col);
     }
 
+    public void count(String col) {
+        table.countBy(col);
+    }
+
     public Table getTable() {
         return table;
     }
