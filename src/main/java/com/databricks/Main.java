@@ -5,7 +5,6 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
-
     public static void main(String[] args) throws IOException {
         System.out.println("Welcome to CSV Query Engine!");
         Scanner sc = new Scanner(System.in);
@@ -30,12 +29,28 @@ public class Main {
                         }
                     }
                     else if (Objects.equals(tokens[i], "SELECT")) {
-                        executor.selectColumn(tokens[++i]).printCSV();
+                        executor.selectColumn(tokens[++i]);
+                        executor.getTable().printCSV();
                         i += 1;
                     }
                     else if (Objects.equals(tokens[i], "TAKE")) {
-                        executor.takeRow(tokens[++i]).printCSV();
+                        executor.takeRow(tokens[++i]);
+                        executor.getTable().printCSV();
                         i += 1;
+                    }
+                    else if (Objects.equals(tokens[i], "ORDERBY")) {
+                        executor.orderByCol(tokens[++i]);
+                        i += 1;
+                        if (i == size) {
+                            executor.getTable().printCSV();
+                        }
+                    }
+                    else if (Objects.equals(tokens[i], "JOIN")) {
+                        executor.joinCSV(tokens[++i], tokens[++i]);
+                        i += 1;
+                        if (i == size) {
+                            executor.getTable().printCSV();
+                        }
                     }
                 }
             }
