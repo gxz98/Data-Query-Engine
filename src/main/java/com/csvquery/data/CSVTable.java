@@ -1,38 +1,42 @@
-package com.databricks.Impl;
+package com.csvquery.data;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Table implements com.databricks.Table {
+public class CSVTable implements Table {
 
     static final String COMMA_DELIMITER = ",";
+
+    // list of rows in the table, not including column names
     private ArrayList<Entry> body;
+
+    // list of column names
     private ArrayList<String> title;
 
+    // number of rows in the table
     private int num_row;
 
-    private int num_col;
-
-    public Table() {
+    public CSVTable() {
         body = new ArrayList<>();
-        num_col = 0;
         num_row = 0;
     }
 
     @Override
     public void setTitles(String line) {
         title = new ArrayList<>(List.of(line.split(COMMA_DELIMITER)));
-        num_col = title.size();
     }
 
     @Override
     public void addEntry(String line) {
-        body.add(new Entry(line));
+        body.add(new CSVEntry(line));
         num_row += 1;
     }
 
-    // select the columns and change CSV table in place
+    @Override
     public void selectCols(ArrayList<String> col) {
         List<Integer> selectIndexes = col.stream().map(this::getIndexByName).toList();
         ArrayList<Entry> newBody= new ArrayList<>();
@@ -41,26 +45,26 @@ public class Table implements com.databricks.Table {
              for (int idx : selectIndexes) {
                 newRow.add(e.getValueAt(idx));
              }
-             newBody.add(new Entry(newRow));
+             newBody.add(new CSVEntry(newRow));
         }
         title = col;
         body = newBody;
     }
 
-    // take rows and change CSV table in place
+    @Override
     public void takeRows(int rowNum) {
         int take = Math.min(rowNum, num_row);
         body = new ArrayList<>(body.subList(0, take));
     }
 
-    // sort table entries
+    @Override
     public void orderByCol(String col) {
         int idx = getIndexByName(col);
         body = new ArrayList<>(body.stream().sorted(
                 (e1, e2) -> Entry.compareBy(e1, e2, idx)).toList());
     }
 
-    // in place join by column
+    @Override
     public void join(Table t, String col) {
         // a lookup for key-entry mapping
         HashMap<String, Entry> keyToEntry = new HashMap<>();
@@ -71,7 +75,7 @@ public class Table implements com.databricks.Table {
             keyToEntry.putIfAbsent(key, e);
         }
         // remove duplicate column name
-        t.removeColName(col);
+        t.getTitle().remove(col);
         int index = getIndexByName(col);
         ArrayList<Entry> newBody = new ArrayList<>();
         for (Entry e : getBody()) {
@@ -80,24 +84,25 @@ public class Table implements com.databricks.Table {
                 ArrayList<String> joinedRow = new ArrayList<>();
                 joinedRow.addAll(e.getRow());
                 joinedRow.addAll(keyToEntry.get(joinKey).getRow());
-                newBody.add(new Entry(joinedRow));
+                newBody.add(new CSVEntry(joinedRow));
             }
         }
         title.addAll(t.getTitle());
         body = newBody;
     }
 
+    @Override
     public void countBy(String col) {
         int idx = getIndexByName(col);
         ArrayList<String> column = getColumn(idx);
         Map<String, Long> count = column.stream().collect(Collectors.groupingBy(p -> p, Collectors.counting()));
         title = new ArrayList<>(List.of(col, "count"));
         body = new ArrayList<>();
-        ArrayList<String> res = new ArrayList<>();
-        count.forEach((k,v) -> body.add(new Entry(k.toString() + "," + v.toString())));
+        count.forEach((k,v) -> body.add(new CSVEntry(k + "," + v.toString())));
     }
 
-    private int getIndexByName(String col) {
+    @Override
+    public int getIndexByName(String col) {
         int i = 0;
         while (i < title.size()) {
             if (title.get(i).equals(col)) {
@@ -113,27 +118,30 @@ public class Table implements com.databricks.Table {
         return title;
     }
 
-    public void removeColName(String col) {
-        title.remove(col);
-    }
-
+    @Override
     public ArrayList<Entry> getBody() {
         return body;
     }
 
-    public ArrayList<String> getColumn(int idx) {
-        ArrayList<String> res = new ArrayList<>();
-        for (Entry e : body) {
-            res.add(e.getValueAt(idx));
-        }
-        return res;
-    }
     @Override
     public void printCSV() {
         // remove bracket
         System.out.println(title.toString().replace("[", "").replace("]", ""));
         Stream<String> lines = body.stream().map(line -> line.toString().replace("[", "").replace("]", ""));
         lines.forEach(System.out::println);
+    }
+
+    /**
+     * Get one column in a table by its index.
+     * @param idx
+     * @return a list of values in the specified column
+     */
+    public ArrayList<String> getColumn(int idx) {
+        ArrayList<String> res = new ArrayList<>();
+        for (Entry e : body) {
+            res.add(e.getValueAt(idx));
+        }
+        return res;
     }
 
 }

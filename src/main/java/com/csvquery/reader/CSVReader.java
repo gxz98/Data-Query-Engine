@@ -1,16 +1,18 @@
-package com.databricks;
+package com.csvquery.reader;
 
-import com.databricks.Impl.Table;
+import com.csvquery.data.CSVTable;
+import com.csvquery.data.Table;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class CSVReader {
+public class CSVReader implements Reader {
 
+    @Override
     public Table read(String file) {
-        Table table = new Table();
+        Table table = new CSVTable();
         try (
                 InputStream inputStream = this.getClass().getResourceAsStream("/" + file);
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);

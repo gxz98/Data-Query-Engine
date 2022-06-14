@@ -1,6 +1,9 @@
-package com.databricks;
+package com.csvquery;
 
-import java.io.*;
+import com.csvquery.executor.CSVExecutor;
+import com.csvquery.executor.Executor;
+
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -9,7 +12,7 @@ public class Main {
         System.out.println("Welcome to CSV Query Engine!");
         Scanner sc = new Scanner(System.in);
         String query = "";
-        Executor executor = new Executor();
+        Executor executor = new CSVExecutor();
 
         while (!query.equals("EXIT")) {
             if (query.length() != 0) {
@@ -22,7 +25,7 @@ public class Main {
                 int i = 0;
                 while (i < size) {
                     if (Objects.equals(tokens[i], "FROM")) {
-                        executor.readCSV(tokens[++i]);
+                        executor.readFile(tokens[++i]);
                         i += 1;
                         if (i == size) {
                             executor.getTable().printCSV();
@@ -46,7 +49,7 @@ public class Main {
                         }
                     }
                     else if (Objects.equals(tokens[i], "JOIN")) {
-                        executor.joinCSV(tokens[++i], tokens[++i]);
+                        executor.join(tokens[++i], tokens[++i]);
                         i += 1;
                         if (i == size) {
                             executor.getTable().printCSV();
@@ -58,6 +61,9 @@ public class Main {
                         if (i == size) {
                             executor.getTable().printCSV();
                         }
+                    }
+                    else {
+                        throw new RuntimeException("Unknown query " + tokens[i]);
                     }
                 }
             }
