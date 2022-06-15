@@ -1,6 +1,6 @@
-package com.csvquery.reader;
+package com.dataquery.reader;
 
-import com.csvquery.data.Table;
+import com.dataquery.data.Table;
 
 public interface Reader {
     /**

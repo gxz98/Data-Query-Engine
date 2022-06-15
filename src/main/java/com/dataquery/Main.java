@@ -1,7 +1,7 @@
-package com.csvquery;
+package com.dataquery;
 
-import com.csvquery.executor.CSVExecutor;
-import com.csvquery.executor.Executor;
+import com.dataquery.executor.CSVExecutor;
+import com.dataquery.executor.Executor;
 
 import java.io.IOException;
 import java.util.Objects;

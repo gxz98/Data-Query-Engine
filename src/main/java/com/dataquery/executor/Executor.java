@@ -1,6 +1,6 @@
-package com.csvquery.executor;
+package com.dataquery.executor;
 
-import com.csvquery.data.Table;
+import com.dataquery.data.Table;
 
 import java.io.IOException;
 

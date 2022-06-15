@@ -1,8 +1,8 @@
-package com.csvquery.executor;
+package com.dataquery.executor;
 
-import com.csvquery.data.CSVTable;
-import com.csvquery.data.Table;
-import com.csvquery.reader.CSVReader;
+import com.dataquery.data.CSVTable;
+import com.dataquery.data.Table;
+import com.dataquery.reader.CSVReader;
 
 import java.io.IOException;
 import java.util.ArrayList;

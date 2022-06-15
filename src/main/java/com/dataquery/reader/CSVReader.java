@@ -1,7 +1,7 @@
-package com.csvquery.reader;
+package com.dataquery.reader;
 
-import com.csvquery.data.CSVTable;
-import com.csvquery.data.Table;
+import com.dataquery.data.CSVTable;
+import com.dataquery.data.Table;
 
 import java.io.BufferedReader;
 import java.io.IOException;

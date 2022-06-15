@@ -1,4 +1,4 @@
-package com.csvquery.data;
+package com.dataquery.data;
 
 import java.util.ArrayList;
 import java.util.List;
