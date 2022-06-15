@@ -20,50 +20,49 @@ public class Main {
                 if (!Objects.equals(tokens[0], "FROM")) {
                     throw new IllegalArgumentException("Query must start with FROM. Please select an CSV file.");
                 }
-
                 int size = tokens.length;
                 int i = 0;
                 while (i < size) {
-                    if (Objects.equals(tokens[i], "FROM")) {
-                        executor.readFile(tokens[++i]);
-                        i += 1;
-                        if (i == size) {
-                            executor.getTable().printCSV();
+                    switch (tokens[i]) {
+                        case "FROM" -> {
+                            executor.readFile(tokens[++i]);
+                            i += 1;
+                            if (i == size) {
+                                executor.getTable().printCSV();
+                            }
                         }
-                    }
-                    else if (Objects.equals(tokens[i], "SELECT")) {
-                        executor.selectColumn(tokens[++i]);
-                        executor.getTable().printCSV();
-                        i += 1;
-                    }
-                    else if (Objects.equals(tokens[i], "TAKE")) {
-                        executor.takeRow(tokens[++i]);
-                        executor.getTable().printCSV();
-                        i += 1;
-                    }
-                    else if (Objects.equals(tokens[i], "ORDERBY")) {
-                        executor.orderByCol(tokens[++i]);
-                        i += 1;
-                        if (i == size) {
+                        case "SELECT" -> {
+                            executor.selectColumn(tokens[++i]);
                             executor.getTable().printCSV();
+                            i += 1;
                         }
-                    }
-                    else if (Objects.equals(tokens[i], "JOIN")) {
-                        executor.join(tokens[++i], tokens[++i]);
-                        i += 1;
-                        if (i == size) {
+                        case "TAKE" -> {
+                            executor.takeRow(tokens[++i]);
                             executor.getTable().printCSV();
+                            i += 1;
                         }
-                    }
-                    else if (Objects.equals(tokens[i], "COUNTBY")) {
-                        executor.count(tokens[++i]);
-                        i += 1;
-                        if (i == size) {
-                            executor.getTable().printCSV();
+                        case "ORDERBY" -> {
+                            executor.orderByCol(tokens[++i]);
+                            i += 1;
+                            if (i == size) {
+                                executor.getTable().printCSV();
+                            }
                         }
-                    }
-                    else {
-                        throw new RuntimeException("Unknown query " + tokens[i]);
+                        case "JOIN" -> {
+                            executor.join(tokens[++i], tokens[++i]);
+                            i += 1;
+                            if (i == size) {
+                                executor.getTable().printCSV();
+                            }
+                        }
+                        case "COUNTBY" -> {
+                            executor.count(tokens[++i]);
+                            i += 1;
+                            if (i == size) {
+                                executor.getTable().printCSV();
+                            }
+                        }
+                        default -> throw new RuntimeException("Unknown query " + tokens[i]);
                     }
                 }
             }

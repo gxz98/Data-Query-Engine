@@ -17,12 +17,13 @@ public class CSVTable implements Table {
     // list of column names
     private ArrayList<String> title;
 
-    // number of rows in the table
-    private int num_row;
-
     public CSVTable() {
         body = new ArrayList<>();
-        num_row = 0;
+    }
+
+    public CSVTable(ArrayList<String> t, ArrayList<Entry> entries) {
+        body = entries;
+        title = t;
     }
 
     @Override
@@ -33,7 +34,6 @@ public class CSVTable implements Table {
     @Override
     public void addEntry(String line) {
         body.add(new CSVEntry(line));
-        num_row += 1;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CSVTable implements Table {
 
     @Override
     public void takeRows(int rowNum) {
-        int take = Math.min(rowNum, num_row);
+        int take = Math.min(rowNum, body.size());
         body = new ArrayList<>(body.subList(0, take));
     }
 

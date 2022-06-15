@@ -7,9 +7,6 @@ import java.util.regex.Pattern;
 public class CSVEntry implements Entry {
     static final String COMMA_DELIMITER = ",";
 
-    // pattern to match integer numbers
-    private static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]*$");
-
     // one row in CSV table
     private ArrayList<String> row;
 
@@ -23,7 +20,7 @@ public class CSVEntry implements Entry {
 
     @Override
     public String getValueAt(int idx) {
-        if (idx > row.size()) {
+        if (idx >= row.size() || idx < 0) {
             return "";
         }
         return row.get(idx);
@@ -36,12 +33,28 @@ public class CSVEntry implements Entry {
 
     @Override
     public void removeCol(int idx) {
+        if (idx >= row.size() || idx < 0) {
+            return;
+        }
         row.remove(idx);
     }
 
     @Override
     public String toString() {
         return row.toString();
+    }
+
+    /**
+     * Compare two entries by their column contents.
+     * @param obj
+     * @return true or false
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (this.getClass() != obj.getClass()) return false;
+        if (!row.equals(((CSVEntry) obj).getRow())) return false;
+        return true;
     }
 
 }

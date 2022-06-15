@@ -35,7 +35,10 @@ public interface Entry {
         String value2 = e2.getValueAt(idx);
         // numeric column
         if (value1.matches(Pattern.compile("^[0-9]*$").pattern())) {
-            return Integer.parseInt(value1) < Integer.parseInt(value2) ? 1 : -1;
+            int v1 = Integer.parseInt(value1);
+            int v2 = Integer.parseInt(value2);
+            if (v1 == v2) return 0;
+            return v1 < v2 ? 1 : -1;
         }
         // string column
         else {
