@@ -1,9 +1,6 @@
 package com.dataquery.data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,29 +63,40 @@ public class CSVTable implements Table {
 
     @Override
     public void join(Table t, String col) {
-        // a lookup for key-entry mapping
-        HashMap<String, Entry> keyToEntry = new HashMap<>();
-        int joinByIndex = t.getIndexByName(col);
-        for (Entry e : t.getBody()) {
-            String key = e.getValueAt(joinByIndex);
-            e.removeCol(joinByIndex);
-            keyToEntry.putIfAbsent(key, e);
-        }
-        // remove duplicate column name
-        t.getTitle().remove(col);
-        int index = getIndexByName(col);
+        this.orderByCol(col);
+        t.orderByCol(col);
+        int idx1 = getIndexByName(col);
+        int idx2 = t.getIndexByName(col);
+
+        Iterator<Entry> tableIter1 = body.iterator();
+        Iterator<Entry> tableIter2 = t.getBody().iterator();
+        // pointer for each table
+        Entry p1 = tableIter1.hasNext() ? tableIter1.next() : null;
+        Entry p2 = tableIter2.hasNext() ? tableIter2.next() : null;
+
         ArrayList<Entry> newBody = new ArrayList<>();
-        for (Entry e : getBody()) {
-            String joinKey = e.getValueAt(index);
-            if (keyToEntry.containsKey(joinKey)) {
+        while (p1 != null && p2 != null) {
+            int compare = p1.getValueAt(idx1).compareTo(p2.getValueAt(idx2));
+            // move the pointer with smaller value
+            if (compare < 0) {
+                p1 = tableIter1.hasNext()? tableIter1.next() : null;
+            }
+            if (compare > 0) {
+                p2 = tableIter2.hasNext() ? tableIter2.next() : null;
+            }
+            else {
                 ArrayList<String> joinedRow = new ArrayList<>();
-                joinedRow.addAll(e.getRow());
-                joinedRow.addAll(keyToEntry.get(joinKey).getRow());
+                joinedRow.addAll(p1.getRow());
+                ArrayList<String> removedCol_p2 = new ArrayList<>(p2.getRow());
+                removedCol_p2.remove(idx2);
+                joinedRow.addAll(removedCol_p2);
                 newBody.add(new CSVEntry(joinedRow));
+                p1 = tableIter1.hasNext() ? tableIter1.next() : null;
             }
         }
-        title.addAll(t.getTitle());
         body = newBody;
+        t.getTitle().remove(col);
+        title.addAll(t.getTitle());
     }
 
     @Override
