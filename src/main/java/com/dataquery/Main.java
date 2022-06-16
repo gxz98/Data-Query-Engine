@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        System.out.println("Welcome to CSV Query Engine!");
+        System.out.println("Welcome to Data Query Engine!");
         Scanner sc = new Scanner(System.in);
         String query = "";
         Executor executor = new CSVExecutor();
@@ -23,7 +23,7 @@ public class Main {
                 int size = tokens.length;
                 int i = 0;
                 while (i < size) {
-                    switch (tokens[i]) {
+                    switch (tokens[i].strip()) {
                         case "FROM" -> {
                             executor.readFile(tokens[++i]);
                             i += 1;

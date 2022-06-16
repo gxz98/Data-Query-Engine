@@ -50,6 +50,9 @@ public class CSVTable implements Table {
 
     @Override
     public void takeRows(int rowNum) {
+        if (rowNum < 0) {
+            throw new RuntimeException("The displayed number of data must by positive! ");
+        }
         int take = Math.min(rowNum, body.size());
         body = new ArrayList<>(body.subList(0, take));
     }
